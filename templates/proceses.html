@@ -1,22 +1,68 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Processes list</title>
-    </head>
-    <body>
-        {{range $osname, $proclist :=.Stat}}
-        <h1>{{$osname}}</h1>
-        <table border="1">
-            <td width="400"><b>Proces</b></td>
-            <td><b>Count / Server count</b></td>
-            {{range $k, $v := $proclist.Processes}}
-                <tr>
-                    <td> {{$k}}</td>
-                    <td>{{$v}} / {{$proclist.Count}}</td>
-                </tr>
-            {{end}}
-        </table>
-        {{end}}
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Processes list</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-9 col-md-6 col-lg-9">
+                <h1> Processes list </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-9 col-md-6 col-lg-9">
+
+                <ul class="nav nav-tabs" id="indexTab" role="tablist">
+                    {{range $osname, $proclist :=.Stat}}
+                    <li class="nav-item">
+                        <a class="nav-link " id="{{ $osname }}-tab" data-toggle="tab" href="#{{ $osname }}" role="tab"
+                            aria-controls="{{ $osname }}" aria-selected="true">{{ $osname }}</a>
+                    </li>
+                    {{end}}
+                </ul>
+
+
+                <div class="tab-content" id="myTabContent">
+                    {{range $osname, $proclist :=.Stat}}
+                    <div class="tab-pane fade " id="{{ $osname }}" role="tabpanel" aria-labelledby="{{ $osname }}-tab">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th><b>Proces</b></th>
+                                    <th><b>Processes / Server count</b></th>
+                                </tr>
+                                {{range $k, $v := $proclist.Processes}}
+                                <tr>
+                                    <td> {{$k}}</td>
+                                    <td>{{$v}} / {{$proclist.Count}}</td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{end}}
+                </div>
+
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+</body>
+
 </html>

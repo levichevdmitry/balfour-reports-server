@@ -20,6 +20,7 @@ type ViewData struct {
 
 type ServerReportItem struct {
 	Title  string
+	Link   string
 	Report [][]string
 }
 
@@ -221,7 +222,9 @@ func main() {
 			log.Fatal(err)
 		}
 
-		server.Title = "Server " + urlQuery.Get("server") + " detailed report"
+		serverName := urlQuery.Get("server")
+		serverName = serverName[:(len(serverName) - 8)]
+		server.Title = "Server: " + serverName + " detailed report"
 		server.Items = server.Items[:0]
 		for _, file := range files {
 			if !file.IsDir() {
@@ -235,8 +238,12 @@ func main() {
 				if err != nil {
 					fmt.Println("Parse error ", err.Error(), file.Name())
 				}
-
-				item := ServerReportItem{Title: Titles[file.Name()]}
+				link := file.Name()
+				link = link[:(len(link) - 11)]
+				item := ServerReportItem{
+					Title: Titles[file.Name()],
+					Link:  link,
+				}
 				item.Report = records
 				server.Items = append(server.Items, item)
 			}
