@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Installed packages list</title>
+    </head>
+    <body>
+        {{range $osname, $proclist :=.Stat}}
+        <h1>{{$osname}}</h1>
+        <table border="1">
+            <td width="400"><b>Package</b></td>
+            <td><b>Packages / Server count</b></td>
+            {{range $k, $v := $proclist.Packages}}
+                <tr>
+                    <td> {{$k}}</td>
+                    <td>{{$v}} / {{$proclist.Count}}</td>
+                </tr>
+            {{end}}
+        </table>
+        {{end}}
+    </body>
+</html>

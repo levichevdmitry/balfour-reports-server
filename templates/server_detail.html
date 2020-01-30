@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style type="text/css">
+            table {
+             width: 900px; /* Ширина таблицы */
+             border-collapse: collapse; /* Убираем двойные линии между ячейками */
+            }
+            td, th {
+             padding: 3px; /* Поля вокруг содержимого таблицы */
+             border: 1px solid black; /* Параметры рамки */
+            }
+            th {
+             background: #b0e0e6; /* Цвет фона */
+            }
+        </style>
+        <title>{{ .Title}}</title>
+    </head>
+    <body>
+        <ul>
+            {{range .Items}}
+                <li>
+                    <h1> {{ .Title}}</h1>
+                    <table>
+                    {{range $row:= .Report}}
+                        <tr>
+                            {{range $col:=$row}}
+                            <td>{{$col}}</td>
+                            {{end}}
+                        </tr>
+                    {{end}}
+                    </table>
+                </li>
+            {{end}}
+        </ul>
+    </body>
+</html>

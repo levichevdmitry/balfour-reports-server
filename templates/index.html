@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ .Title}}</title>
+        <style type="text/css">
+            table {
+             width: 900px; /* Ширина таблицы */
+             border-collapse: collapse; /* Убираем двойные линии между ячейками */
+            }
+            td, th {
+             padding: 3px; /* Поля вокруг содержимого таблицы */
+             border: 1px solid black; /* Параметры рамки */
+            }
+            th {
+             background: #b0e0e6; /* Цвет фона */
+            }
+        </style>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td>
+                <h1>{{ .Title}}</h1>
+                <ul>
+                    {{range .Servers}}
+                        <li><a href="server_detail?server={{ . }}"> <b>{{ . }}</b></a></li>
+                    {{end}}
+                </ul>
+                </td>
+                <td valign="top">
+                <h1>Processes list</h1>
+                <a href="proceses"> Standart processes list</a>
+                <h1>Packages list</h1>
+                <a href="packages"> Standart packages list</a>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
