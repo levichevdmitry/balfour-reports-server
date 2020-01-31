@@ -52,7 +52,7 @@ func CalcStat() {
 
 	for _, dir := range dirs {
 		if dir.IsDir() {
-			// Get OS name setuped in server
+			// Get OS name setup on the server
 			hostFile, opnErr := os.Open("./reports/" + dir.Name() + "/host-report.csv")
 			if opnErr != nil {
 				log.Print(opnErr)
@@ -77,7 +77,7 @@ func CalcStat() {
 					}
 					statOS.Count++
 
-					// Analyze proceses
+					// Analyze processes
 					// procesesFile, opnErr := os.Open("./reports/" + dir.Name() + "/run-report.txt")
 					// if opnErr != nil {
 					// 	log.Print(opnErr)
@@ -184,7 +184,7 @@ func main() {
 	}
 
 	server := ServerDetail{
-		Title: "Server detail report",
+		Title: "Server's detailed report",
 		Items: make([]ServerReportItem, 0, 1),
 	}
 
@@ -202,19 +202,19 @@ func main() {
 		tmpl, _ := template.ParseFiles("templates/index.html")
 		tmpl.Execute(w, data)
 	})
-	// Proceses detail
+	// Process statistics
 	http.HandleFunc("/proceses", func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl, _ := template.ParseFiles("templates/proceses.html")
 		tmpl.Execute(w, ServersStats)
 	})
-	// Pacakges detail
+	// Package statistics
 	http.HandleFunc("/packages", func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl, _ := template.ParseFiles("templates/packages.html")
 		tmpl.Execute(w, ServersStats)
 	})
-	// Server detail
+	// Server details
 	http.HandleFunc("/server_detail", func(w http.ResponseWriter, r *http.Request) {
 		urlQuery := r.URL.Query()
 		dir := "./reports/" + urlQuery.Get("server")
@@ -225,7 +225,7 @@ func main() {
 
 		serverName := urlQuery.Get("server")
 		serverName = serverName[:(len(serverName) - 8)]
-		server.Title = "Server: " + serverName + " detailed report"
+		server.Title = "Server: " + serverName + " - detailed report"
 		server.Items = server.Items[:0]
 		for _, file := range files {
 			if !file.IsDir() {
@@ -237,7 +237,7 @@ func main() {
 
 				records, err := reader.ReadAll()
 				if err != nil {
-					fmt.Println("Parse error ", err.Error(), file.Name())
+					fmt.Println("Parsing error ", err.Error(), file.Name())
 				}
 				link := file.Name()
 				link = link[:(len(link) - 11)]
