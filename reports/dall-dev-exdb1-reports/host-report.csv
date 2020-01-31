@@ -7,5 +7,5 @@
 "Release","16.04"
 "Codename","xenial"
 "Kernel","Linux dall-dev-exdb1 4.4.0-62-generic #83-Ubuntu SMP Wed Jan 18 14:10:15 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux"
-"Filesystem /","Size:tmpfs Used:799M Avail:9.1M"
-"Memory","Total:7983 Used:614 Free:1882 MBytes"
+"Filesystem /","Size:tmpfs Used:799M Avail:17M"
+"Memory","Total:7983 Used:615 Free:1870 MBytes"

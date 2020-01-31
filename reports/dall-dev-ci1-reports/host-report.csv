@@ -8,4 +8,4 @@
 "Codename","trusty"
 "Kernel","Linux dall-dev-ci1 3.13.0-117-generic #164-Ubuntu SMP Fri Apr 7 11:05:26 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux"
 "Filesystem /","Size:tmpfs Used:1.6G Avail:960K"
-"Memory","Total:16049 Used:10879 Free:5169 MBytes"
+"Memory","Total:16049 Used:11048 Free:5000 MBytes"

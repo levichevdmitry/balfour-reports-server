@@ -13,12 +13,50 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-9 col-md-6 col-lg-9">
-                <h1> {{ .Title}} </h1>
+                <h1> Server: {{ .Title}} - detailed report </h1>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-9 col-md-6 col-lg-9">
-                About form should be here
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Instance name</td>
+                        <td>{{ .InstanceName }}</td>
+                        <td>Instance type</td>
+                        <td>{{ .InstanceType }}</td>
+                    </tr>
+                    <tr>
+                        <td>Operating system</td>
+                        <td>{{ .OsName }}</td>
+                        <td>Purpose</td>
+                        <td>{{ .Purpose }}</td>
+                    </tr>
+                    <tr>
+                        <td>IP Address(es)</td>
+                        <td>{{ .IpAdr }}</td>
+                        <td>Credentials</td>
+                        <td>{{ .Passwd }}</td>
+                    </tr>
+                    <tr>
+                        <td>CPU utilization (%)</td>
+                        <td>{{ .CpuUtil }}</td>
+                        <td>RAM utilization (Mb)</td>
+                        <td>{{ .RamUtil }}</td>
+                    </tr>
+                    <tr>
+                        <td>Red cloak installed?</td>
+                        <td>{{ .RedCloakInstalled }}</td>
+                        <td>Infected?</td>
+                        <td>{{ .Infected }}</td>
+                    </tr>
+                    <tr>
+                        <td>Comments</td>
+                        <td>{{ .Comments }}</td>
+                        <td>Analyzed by</td>
+                        <td>{{ .Analize }}</td>
+                    </tr>
+                </table>
+                <a href="about_server?id={{ .ServerId }}"> Edit </a>
             </div>
         </div>
 

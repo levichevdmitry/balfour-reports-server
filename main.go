@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -25,8 +26,21 @@ type ServerReportItem struct {
 }
 
 type ServerDetail struct {
-	Title string
-	Items []ServerReportItem
+	Title             string
+	ServerId          string
+	InstanceName      string
+	InstanceType      string
+	OsName            string
+	Purpose           string
+	IpAdr             string
+	Passwd            string
+	CpuUtil           string
+	RamUtil           string
+	RedCloakInstalled int
+	Infected          int
+	Comments          string
+	Analize           string
+	Items             []ServerReportItem
 }
 
 type Stat struct {
@@ -45,7 +59,7 @@ var Titles map[string]string
 
 func CalcStat() {
 
-	dirs, err := ioutil.ReadDir("./reports")
+	dirs, err := ioutil.ReadDir("reports")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +67,7 @@ func CalcStat() {
 	for _, dir := range dirs {
 		if dir.IsDir() {
 			// Get OS name setup on the server
-			hostFile, opnErr := os.Open("./reports/" + dir.Name() + "/host-report.csv")
+			hostFile, opnErr := os.Open("reports/" + dir.Name() + "/host-report.csv")
 			if opnErr != nil {
 				log.Print(opnErr)
 			}
@@ -64,7 +78,14 @@ func CalcStat() {
 			var record []string
 			for rdErr != io.EOF {
 				record, rdErr = reader.Read()
+				if rdErr != nil && rdErr != io.EOF {
+					fmt.Println("Error reading file ", hostFile.Name(), rdErr)
+				}
 
+				if len(record) == 0 {
+					fmt.Println("Records is empty in:", hostFile.Name())
+					continue
+				}
 				if distIdx := strings.Index(record[0], "Distributor ID"); distIdx != -1 {
 					osName := record[1]
 					osName = strings.TrimSpace(osName)
@@ -78,79 +99,69 @@ func CalcStat() {
 					statOS.Count++
 
 					// Analyze processes
-					// procesesFile, opnErr := os.Open("./reports/" + dir.Name() + "/run-report.txt")
-					// if opnErr != nil {
-					// 	log.Print(opnErr)
-					// }
-					// procReader := bufio.NewReader(procesesFile)
+					procesesFile, opnErr := os.Open("reports/" + dir.Name() + "/run-report.csv")
+					if opnErr != nil {
+						log.Print(opnErr)
+					}
+					procReader := csv.NewReader(bufio.NewReader(procesesFile))
 
-					// var rdProcErr error
-					// var procLine string
-					// for true {
-					// 	procLine, rdProcErr = procReader.ReadString('\n')
+					var rdProcErr error
+					var procRecord []string
 
-					// 	if rdProcErr == io.EOF {
-					// 		break
-					// 	}
+					for rdProcErr != io.EOF {
+						procRecord, rdProcErr = procReader.Read()
 
-					// 	if strings.Index(procLine, "%CPU %MEM") != -1 {
-					// 		fmt.Println("%CPU %MEM Skiped")
-					// 		continue
-					// 	}
-					// 	procLine = procLine[16:]
-					// 	statOS.Processes[procLine]++
-					// }
-					// procesesFile.Close()
+						if rdProcErr != nil && rdProcErr != io.EOF {
+							fmt.Println("Error reading package file!", rdProcErr.Error(), "reports/"+dir.Name()+"/run-report.csv")
+							break
+						}
 
-					// Analyze packages
-					// pkgFile, opnErr := os.Open("./reports/" + dir.Name() + "/pkg-report.txt")
-					// if opnErr != nil {
-					// 	log.Print(opnErr)
-					// }
-					// pkgReader := bufio.NewReader(pkgFile)
+						if len(procRecord) < 11 {
+							fmt.Println("Records is empty or column count < 11:", "reports/"+dir.Name()+"/run-report.csv")
+							continue
+						}
+						statOS.Processes[procRecord[10]]++
+					}
+					procesesFile.Close()
 
-					// var rdPkgErr error
-					// var pkgLine string
-					// var lineCounter int = 0
-					// var oldFieldsCount int = 3
-					// for true {
-					// 	pkgLine, rdPkgErr = pkgReader.ReadString('\n')
+					//Analyze packages
+					pkgFile, opnErr := os.Open("reports/" + dir.Name() + "/pkg-report.csv")
+					if opnErr != nil {
+						log.Print(opnErr)
+					}
+					pkgReader := csv.NewReader(bufio.NewReader(pkgFile))
 
-					// 	if rdPkgErr == io.EOF {
-					// 		break
-					// 	}
-					// 	lineCounter++
-					// 	if osName == "CentOS" {
-					// 		if lineCounter <= 2 {
-					// 			fmt.Println("CentOS package line Skiped")
-					// 			continue
-					// 		}
+					var rdPkgErr error
+					var pkgRecord []string
 
-					// 		columns := strings.Fields(pkgLine)
+					for rdPkgErr != io.EOF {
+						pkgRecord, rdPkgErr = pkgReader.Read()
 
-					// 		oldFieldsCount += len(columns)
-					// 		if len(columns) == 3 {
-					// 			statOS.Packages[columns[0]]++
-					// 		} else {
-					// 			if oldFieldsCount%3 == 1 {
-					// 				statOS.Packages[columns[0]]++
-					// 			}
-					// 		}
-					// 	}
+						if rdPkgErr != nil && rdPkgErr != io.EOF {
+							fmt.Println("Error reading package file!", rdPkgErr.Error(), "reports/"+dir.Name()+"/pkg-report.csv")
+							break
+						}
 
-					// 	if osName == "Ubuntu" {
-					// 		if lineCounter <= 6 {
-					// 			fmt.Println("Ubuntu package line Skiped")
-					// 			continue
-					// 		}
+						if len(pkgRecord) == 0 {
+							fmt.Println("Records is empty in:", "reports/"+dir.Name()+"/pkg-report.csv")
+							continue
+						}
 
-					// 		columns := strings.Fields(pkgLine)
+						if osName == "CentOS" {
+							columns := strings.FieldsFunc(pkgRecord[0], func(c rune) bool {
+								if c == ':' {
+									return true
+								}
+								return false
+							})
+							statOS.Packages[columns[0]]++
+						}
 
-					// 		statOS.Packages[columns[1]]++
-					// 	}
-
-					// }
-					// pkgFile.Close()
+						if osName == "Ubuntu" {
+							statOS.Packages[pkgRecord[0]]++
+						}
+					}
+					pkgFile.Close()
 
 					ServersStats.Stat[osName] = statOS
 
@@ -170,7 +181,9 @@ func InitTitles() {
 	Titles["run-report.csv"] = "Running processes:"
 	Titles["service-report.csv"] = "Services:"
 	Titles["connections-report.csv"] = "Connections:"
-
+	Titles["mysqldb-report.csv"] = "MySQL DBs:"
+	Titles["mongodb-report.csv"] = "Mongo DBs:"
+	Titles["webapps-report.csv"] = "Web Apps"
 }
 
 func main() {
@@ -189,7 +202,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		dirs, err := ioutil.ReadDir("./reports")
+		dirs, err := ioutil.ReadDir("reports")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -217,15 +230,59 @@ func main() {
 	// Server details
 	http.HandleFunc("/server_detail", func(w http.ResponseWriter, r *http.Request) {
 		urlQuery := r.URL.Query()
-		dir := "./reports/" + urlQuery.Get("server")
+		dir := "reports/" + urlQuery.Get("server")
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		serverName := urlQuery.Get("server")
+		server.ServerId = serverName
 		serverName = serverName[:(len(serverName) - 8)]
-		server.Title = "Server: " + serverName + " - detailed report"
+		server.Title = serverName
+
+		// Set server detail params
+		_, statErr := os.Stat(dir + "/about.csv")
+		if os.IsExist(statErr) {
+			csvAboutFile, _ := os.Open(dir + "/about.csv")
+			aboutReader := csv.NewReader(bufio.NewReader(csvAboutFile))
+
+			aboutReader.Comma = ','
+			aboutReader.LazyQuotes = true
+
+			aboutProperties := make(map[string]string, 1)
+			var aboutRecords []string
+			var rdErr error
+			for rdErr != io.EOF {
+				aboutRecords, rdErr = aboutReader.Read()
+				if rdErr != nil && rdErr != io.EOF {
+					continue
+				}
+				aboutProperties[aboutRecords[0]] = aboutRecords[1]
+			}
+
+			server.InstanceName = aboutProperties["InstanceName"]
+			server.InstanceType = aboutProperties["InstanceType"]
+			server.OsName = aboutProperties["OsName"]
+			server.Purpose = aboutProperties["Purpose"]
+			server.IpAdr = aboutProperties["IpAdr"]
+			server.Passwd = aboutProperties["Passwd"]
+			server.CpuUtil = aboutProperties["CpuUtil"]
+			server.RamUtil = aboutProperties["RamUtil"]
+			tmp, _ := strconv.Atoi(aboutProperties["RedCloakInstalled"])
+			server.RedCloakInstalled = tmp
+			tmp, _ = strconv.Atoi(aboutProperties["Infected"])
+			server.Infected = tmp
+			server.Comments = aboutProperties["Comments"]
+			server.Analize = aboutProperties["Analize"]
+
+			csvAboutFile.Close()
+
+		} else {
+			server.InstanceName = serverName
+			server.InstanceType = "VM"
+		}
+
+		// -------------------------
 		server.Items = server.Items[:0]
 		for _, file := range files {
 			if !file.IsDir() {
@@ -251,6 +308,13 @@ func main() {
 		}
 
 		tmpl, _ := template.ParseFiles("templates/server_detail.html")
+		tmpl.Execute(w, server)
+	})
+
+	// About server form
+	http.HandleFunc("/about_server", func(w http.ResponseWriter, r *http.Request) {
+
+		tmpl, _ := template.ParseFiles("templates/about_form.html")
 		tmpl.Execute(w, server)
 	})
 

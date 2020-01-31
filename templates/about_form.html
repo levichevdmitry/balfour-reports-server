@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Package List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-9 col-md-6 col-lg-9">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="instanceName">Instance name</label>
+                            <input type="text" class="form-control" id="instanceName" placeholder="Instance name"
+                                value="{{ .InstanceName }}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="instanceType">Instance type</label>
+                            <input type="text" class="form-control" id="instanceType" placeholder="Instance type"
+                                value="{{ .InstanceType }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="osName">Operating system</label>
+                            <input type="text" class="form-control" id="osName" placeholder="Operating system"
+                                value="{{ .OsName }}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="purpose">Purpose</label>
+                            <input type="text" class="form-control" id="purpose" placeholder="Purpose"
+                                value="{{.Purpose}}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="ipadr">IP Address(es)</label>
+                            <input type="text" class="form-control" id="ipadr" placeholder="IP Address(es)"
+                                value="{{ .IpAdr }}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="passwd">Credentials</label>
+                            <input type="text" class="form-control" id="passwd" placeholder="Credentials" value="{{ .Passwd }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="cpu_util">CPU utilization (%)</label>
+                            <input type="text" class="form-control" id="cpu_util" placeholder="CPU utilization (%)" value="{{ .CpuUtil }}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="ram_util">RAM utilization (Mb)</label>
+                            <input type="text" class="form-control" id="ram_util" placeholder="RAM utilization (Mb)" value="{{ .RamUtil }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="redCloakCheck" value="{{ .RedCloakInstalled }}">
+                                <label class="form-check-label" for="redCloakCheck">Red cloak installed</label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="infectedCheck" value="{{ .Infected }}">
+                                <label class="form-check-label" for="infectedCheck">Infected</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="analyze">Analyzed by</label>
+                        <input type="text" class="form-control" id="analyze" placeholder="Analyzed by" value="{{ .Analize }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="comments">Comments:</label>
+                        <textarea class="form-control" name="comments" rows="3" > {{ .Comments }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
