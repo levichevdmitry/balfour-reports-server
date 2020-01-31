@@ -64,6 +64,7 @@ func CalcStat() {
 			var record []string
 			for rdErr != io.EOF {
 				record, rdErr = reader.Read()
+
 				if distIdx := strings.Index(record[0], "Distributor ID"); distIdx != -1 {
 					osName := record[1]
 					osName = strings.TrimSpace(osName)
