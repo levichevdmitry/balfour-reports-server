@@ -59,7 +59,7 @@ var Titles map[string]string
 
 func CalcStat() {
 
-	dirs, err := ioutil.ReadDir("reports")
+	dirs, err := ioutil.ReadDir("./reports")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -67,7 +67,7 @@ func CalcStat() {
 	for _, dir := range dirs {
 		if dir.IsDir() {
 			// Get OS name setup on the server
-			hostFile, opnErr := os.Open("reports/" + dir.Name() + "/host-report.csv")
+			hostFile, opnErr := os.Open("./reports/" + dir.Name() + "/host-report.csv")
 			if opnErr != nil {
 				log.Print(opnErr)
 			}
@@ -99,7 +99,7 @@ func CalcStat() {
 					statOS.Count++
 
 					// Analyze processes
-					procesesFile, opnErr := os.Open("reports/" + dir.Name() + "/run-report.csv")
+					procesesFile, opnErr := os.Open("./reports/" + dir.Name() + "/run-report.csv")
 					if opnErr != nil {
 						log.Print(opnErr)
 					}
@@ -112,12 +112,12 @@ func CalcStat() {
 						procRecord, rdProcErr = procReader.Read()
 
 						if rdProcErr != nil && rdProcErr != io.EOF {
-							fmt.Println("Error reading package file!", rdProcErr.Error(), "reports/"+dir.Name()+"/run-report.csv")
+							fmt.Println("Error reading package file!", rdProcErr.Error(), "./reports/"+dir.Name()+"/run-report.csv")
 							break
 						}
 
 						if len(procRecord) < 11 {
-							fmt.Println("Records is empty or column count < 11:", "reports/"+dir.Name()+"/run-report.csv")
+							fmt.Println("Records is empty or column count < 11:", "./reports/"+dir.Name()+"/run-report.csv")
 							continue
 						}
 						statOS.Processes[procRecord[10]]++
@@ -125,7 +125,7 @@ func CalcStat() {
 					procesesFile.Close()
 
 					//Analyze packages
-					pkgFile, opnErr := os.Open("reports/" + dir.Name() + "/pkg-report.csv")
+					pkgFile, opnErr := os.Open("./reports/" + dir.Name() + "/pkg-report.csv")
 					if opnErr != nil {
 						log.Print(opnErr)
 					}
@@ -138,12 +138,12 @@ func CalcStat() {
 						pkgRecord, rdPkgErr = pkgReader.Read()
 
 						if rdPkgErr != nil && rdPkgErr != io.EOF {
-							fmt.Println("Error reading package file!", rdPkgErr.Error(), "reports/"+dir.Name()+"/pkg-report.csv")
+							fmt.Println("Error reading package file!", rdPkgErr.Error(), "./reports/"+dir.Name()+"/pkg-report.csv")
 							break
 						}
 
 						if len(pkgRecord) == 0 {
-							fmt.Println("Records is empty in:", "reports/"+dir.Name()+"/pkg-report.csv")
+							fmt.Println("Records is empty in:", "./reports/"+dir.Name()+"/pkg-report.csv")
 							continue
 						}
 
@@ -202,7 +202,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		dirs, err := ioutil.ReadDir("reports")
+		dirs, err := ioutil.ReadDir("./reports")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -230,7 +230,7 @@ func main() {
 	// Server details
 	http.HandleFunc("/server_detail", func(w http.ResponseWriter, r *http.Request) {
 		urlQuery := r.URL.Query()
-		dir := "reports/" + urlQuery.Get("server")
+		dir := "./reports/" + urlQuery.Get("server")
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
 			log.Fatal(err)
