@@ -10,7 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
+	"reflect"
 	"strings"
 )
 
@@ -36,8 +36,8 @@ type ServerDetail struct {
 	Passwd            string
 	CpuUtil           string
 	RamUtil           string
-	RedCloakInstalled int
-	Infected          int
+	RedCloakInstalled string
+	Infected          string
 	Comments          string
 	Analize           string
 	Items             []ServerReportItem
@@ -229,13 +229,161 @@ func main() {
 	})
 	// Server details
 	http.HandleFunc("/server_detail", func(w http.ResponseWriter, r *http.Request) {
-		urlQuery := r.URL.Query()
-		dir := "./reports/" + urlQuery.Get("server")
+
+		var dir string
+		var serverName string
+
+		server.InstanceType = "VM"
+
+		if r.Method == http.MethodPost {
+			server.InstanceName = r.FormValue("InstanceName")
+			server.InstanceType = r.FormValue("InstanceType")
+			server.OsName = r.FormValue("OsName")
+			server.Purpose = r.FormValue("Purpose")
+			server.IpAdr = r.FormValue("IpAdr")
+			server.Passwd = r.FormValue("Passwd")
+			server.CpuUtil = r.FormValue("CpuUtil")
+			server.RamUtil = r.FormValue("RamUtil")
+			server.RedCloakInstalled = r.FormValue("RedCloakInstalled")
+			server.Infected = r.FormValue("Infected")
+			server.Comments = r.FormValue("Comments")
+			server.Analize = r.FormValue("Analize")
+
+			dir = "./reports/" + r.FormValue("server")
+			serverName = r.FormValue("server")
+			server.ServerId = serverName
+			serverName = serverName[:(len(serverName) - 8)]
+			server.Title = serverName
+			// Write to csv file
+
+			aboutRecords := make([][]string, 0)
+
+			s := reflect.ValueOf(&server).Elem()
+			typeOfT := s.Type()
+
+			for i := 0; i < s.NumField(); i++ {
+				f := s.Field(i)
+				name := typeOfT.Field(i).Name
+				if name == "Items" || name == "Title" || name == "ServerId" {
+					continue
+				}
+				record := make([]string, 2)
+				record[0] = name
+				record[1] = f.Interface().(string)
+				aboutRecords = append(aboutRecords, record)
+			}
+
+			csvFile, err := os.Create(dir + "/about.csv")
+
+			if err != nil {
+				log.Fatalf("failed creating file: %s", err)
+			}
+
+			csvwriter := csv.NewWriter(csvFile)
+			wrErr := csvwriter.WriteAll(aboutRecords)
+			if wrErr != nil {
+				fmt.Println("Error writing file %s", wrErr.Error())
+			}
+			fmt.Println("About server data saved to %s", dir+"/about.csv")
+			csvFile.Close()
+
+		} else {
+
+			urlQuery := r.URL.Query()
+			dir = "./reports/" + urlQuery.Get("server")
+			serverName = urlQuery.Get("server")
+			server.ServerId = serverName
+			serverName = serverName[:(len(serverName) - 8)]
+			server.Title = serverName
+		}
+
+		server.InstanceName = serverName
+
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("Error reading dir", dir, err)
+			return
 		}
-		serverName := urlQuery.Get("server")
+
+		// Set server detail params
+		_, statErr := os.Stat(dir + "/about.csv")
+		if os.IsExist(statErr) {
+			csvAboutFile, _ := os.Open(dir + "/about.csv")
+			aboutReader := csv.NewReader(bufio.NewReader(csvAboutFile))
+
+			aboutReader.Comma = ','
+			aboutReader.LazyQuotes = true
+
+			aboutProperties := make(map[string]string, 1)
+			var aboutRecords []string
+			var rdErr error
+			for rdErr != io.EOF {
+				aboutRecords, rdErr = aboutReader.Read()
+				if rdErr != nil && rdErr != io.EOF {
+					continue
+				}
+				aboutProperties[aboutRecords[0]] = aboutRecords[1]
+			}
+
+			server.InstanceName = aboutProperties["InstanceName"]
+			server.InstanceType = aboutProperties["InstanceType"]
+			server.OsName = aboutProperties["OsName"]
+			server.Purpose = aboutProperties["Purpose"]
+			server.IpAdr = aboutProperties["IpAdr"]
+			server.Passwd = aboutProperties["Passwd"]
+			server.CpuUtil = aboutProperties["CpuUtil"]
+			server.RamUtil = aboutProperties["RamUtil"]
+			server.RedCloakInstalled = aboutProperties["RedCloakInstalled"]
+			server.Infected = aboutProperties["Infected"]
+			server.Comments = aboutProperties["Comments"]
+			server.Analize = aboutProperties["Analize"]
+
+			csvAboutFile.Close()
+
+		}
+
+		// -------------------------
+		server.Items = server.Items[:0]
+		for _, file := range files {
+			if !file.IsDir() {
+
+				if file.Name() == "about.csv" {
+					continue
+				}
+
+				csvFile, _ := os.Open(dir + "/" + file.Name())
+				reader := csv.NewReader(bufio.NewReader(csvFile))
+
+				reader.Comma = ','
+				reader.LazyQuotes = true
+
+				records, err := reader.ReadAll()
+				if err != nil {
+					fmt.Println("Parsing error ", err.Error(), file.Name())
+				}
+				link := file.Name()
+				link = link[:(len(link) - 11)]
+				item := ServerReportItem{
+					Title: Titles[file.Name()],
+					Link:  link,
+				}
+				item.Report = records
+				server.Items = append(server.Items, item)
+			}
+		}
+
+		tmpl, _ := template.ParseFiles("templates/server_detail.html")
+		tmpl.Execute(w, server)
+	})
+
+	// About server form
+	http.HandleFunc("/about_server", func(w http.ResponseWriter, r *http.Request) {
+
+		var dir string
+		var serverName string
+		urlQuery := r.URL.Query()
+		dir = "./reports/" + urlQuery.Get("server")
+		serverName = urlQuery.Get("server")
 		server.ServerId = serverName
 		serverName = serverName[:(len(serverName) - 8)]
 		server.Title = serverName
@@ -268,10 +416,8 @@ func main() {
 			server.Passwd = aboutProperties["Passwd"]
 			server.CpuUtil = aboutProperties["CpuUtil"]
 			server.RamUtil = aboutProperties["RamUtil"]
-			tmp, _ := strconv.Atoi(aboutProperties["RedCloakInstalled"])
-			server.RedCloakInstalled = tmp
-			tmp, _ = strconv.Atoi(aboutProperties["Infected"])
-			server.Infected = tmp
+			server.RedCloakInstalled = aboutProperties["RedCloakInstalled"]
+			server.Infected = aboutProperties["Infected"]
 			server.Comments = aboutProperties["Comments"]
 			server.Analize = aboutProperties["Analize"]
 
@@ -284,35 +430,6 @@ func main() {
 
 		// -------------------------
 		server.Items = server.Items[:0]
-		for _, file := range files {
-			if !file.IsDir() {
-				csvFile, _ := os.Open(dir + "/" + file.Name())
-				reader := csv.NewReader(bufio.NewReader(csvFile))
-
-				reader.Comma = ','
-				reader.LazyQuotes = true
-
-				records, err := reader.ReadAll()
-				if err != nil {
-					fmt.Println("Parsing error ", err.Error(), file.Name())
-				}
-				link := file.Name()
-				link = link[:(len(link) - 11)]
-				item := ServerReportItem{
-					Title: Titles[file.Name()],
-					Link:  link,
-				}
-				item.Report = records
-				server.Items = append(server.Items, item)
-			}
-		}
-
-		tmpl, _ := template.ParseFiles("templates/server_detail.html")
-		tmpl.Execute(w, server)
-	})
-
-	// About server form
-	http.HandleFunc("/about_server", func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl, _ := template.ParseFiles("templates/about_form.html")
 		tmpl.Execute(w, server)

@@ -12,74 +12,85 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-9 col-md-6 col-lg-9">
-                <form>
+                <form action="server_detail" method="POST">
                     <div class="form-row">
                         <div class="form-group col-md-4">
                             <label for="instanceName">Instance name</label>
-                            <input type="text" class="form-control" id="instanceName" placeholder="Instance name"
-                                value="{{ .InstanceName }}">
+                            <input type="text" class="form-control" id="instanceName" name="InstanceName"
+                                placeholder="Instance name" value="{{ .InstanceName }}">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="instanceType">Instance type</label>
-                            <input type="text" class="form-control" id="instanceType" placeholder="Instance type"
-                                value="{{ .InstanceType }}">
+                            <input type="text" class="form-control" id="instanceType" name="InstanceType"
+                                placeholder="Instance type" value="{{ .InstanceType }}">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4">
                             <label for="osName">Operating system</label>
-                            <input type="text" class="form-control" id="osName" placeholder="Operating system"
-                                value="{{ .OsName }}">
+                            <input type="text" class="form-control" id="osName" name="OsName"
+                                placeholder="Operating system" value="{{ .OsName }}">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="purpose">Purpose</label>
-                            <input type="text" class="form-control" id="purpose" placeholder="Purpose"
+                            <input type="text" class="form-control" id="purpose" name="Purpose" placeholder="Purpose"
                                 value="{{.Purpose}}">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4">
                             <label for="ipadr">IP Address(es)</label>
-                            <input type="text" class="form-control" id="ipadr" placeholder="IP Address(es)"
+                            <input type="text" class="form-control" id="ipadr" name="IpAdr" placeholder="IP Address(es)"
                                 value="{{ .IpAdr }}">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="passwd">Credentials</label>
-                            <input type="text" class="form-control" id="passwd" placeholder="Credentials" value="{{ .Passwd }}">
+                            <input type="text" class="form-control" id="passwd" name="Passwd" placeholder="Credentials"
+                                value="{{ .Passwd }}">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4">
                             <label for="cpu_util">CPU utilization (%)</label>
-                            <input type="text" class="form-control" id="cpu_util" placeholder="CPU utilization (%)" value="{{ .CpuUtil }}">
+                            <input type="text" class="form-control" id="cpu_util" name="CpuUtil"
+                                placeholder="CPU utilization (%)" value="{{ .CpuUtil }}">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="ram_util">RAM utilization (Mb)</label>
-                            <input type="text" class="form-control" id="ram_util" placeholder="RAM utilization (Mb)" value="{{ .RamUtil }}">
+                            <input type="text" class="form-control" id="ram_util" name="RamUtil"
+                                placeholder="RAM utilization (Mb)" value="{{ .RamUtil }}">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="redCloakCheck" value="{{ .RedCloakInstalled }}">
-                                <label class="form-check-label" for="redCloakCheck">Red cloak installed</label>
-                            </div>
+
+                            <label for="redCloakCheck">Red cloak installed</label>
+                            <select class="form-control" id="redCloakCheck" name="RedCloakInstalled">
+                                <option selected>No</option>
+                                <option>Yes</option>
+                            </select>
+                            
                         </div>
                         <div class="form-group col-md-4">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="infectedCheck" value="{{ .Infected }}">
-                                <label class="form-check-label" for="infectedCheck">Infected</label>
-                            </div>
+                            
+                            <label for="infectedCheck">Infected</label>
+                            <select class="form-control" id="infectedCheck" name="Infected">
+                                <option selected>No</option>
+                                <option>Yes</option>
+                            </select>
+
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="analyze">Analyzed by</label>
-                        <input type="text" class="form-control" id="analyze" placeholder="Analyzed by" value="{{ .Analize }}">
+                        <input type="text" class="form-control" id="analyze" name="Analize" placeholder="Analyzed by"
+                            value="{{ .Analize }}">
                     </div>
                     <div class="form-group">
                         <label for="comments">Comments:</label>
-                        <textarea class="form-control" name="comments" rows="3" > {{ .Comments }}</textarea>
+                        <textarea class="form-control" name="Comments" rows="3"> {{ .Comments }}</textarea>
                     </div>
+                    <input type="hidden" name="server" value="{{ .ServerId }}">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
