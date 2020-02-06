@@ -233,6 +233,20 @@ func main() {
 		var dir string
 		var serverName string
 
+		// Clear server data
+		server.InstanceName = ""
+		server.InstanceType = ""
+		server.OsName = ""
+		server.Purpose = ""
+		server.IpAdr = ""
+		server.Passwd = ""
+		server.CpuUtil = ""
+		server.RamUtil = ""
+		server.RedCloakInstalled = ""
+		server.Infected = ""
+		server.Comments = ""
+		server.Analize = ""
+
 		server.InstanceType = "VM"
 
 		if r.Method == http.MethodPost {
@@ -342,21 +356,7 @@ func main() {
 
 			csvAboutFile.Close()
 
-		} else {
-			// Clear server var
-			server.InstanceName = ""
-			server.InstanceType = ""
-			server.OsName = ""
-			server.Purpose = ""
-			server.IpAdr = ""
-			server.Passwd = ""
-			server.CpuUtil = ""
-			server.RamUtil = ""
-			server.RedCloakInstalled = ""
-			server.Infected = ""
-			server.Comments = ""
-			server.Analize = ""
-		}
+		} 
 
 		// -------------------------
 		server.Items = server.Items[:0]
@@ -394,6 +394,20 @@ func main() {
 
 	// About server form
 	http.HandleFunc("/about_server", func(w http.ResponseWriter, r *http.Request) {
+
+		// Clear server data
+		server.InstanceName = ""
+		server.InstanceType = ""
+		server.OsName = ""
+		server.Purpose = ""
+		server.IpAdr = ""
+		server.Passwd = ""
+		server.CpuUtil = ""
+		server.RamUtil = ""
+		server.RedCloakInstalled = ""
+		server.Infected = ""
+		server.Comments = ""
+		server.Analize = ""
 
 		var dir string
 		var serverName string
