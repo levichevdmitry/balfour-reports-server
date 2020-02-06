@@ -307,22 +307,24 @@ func main() {
 
 		// Set server detail params
 		_, statErr := os.Stat(dir + "/about.csv")
-		if os.IsExist(statErr) {
+		if statErr == nil {
 			csvAboutFile, _ := os.Open(dir + "/about.csv")
 			aboutReader := csv.NewReader(bufio.NewReader(csvAboutFile))
 
 			aboutReader.Comma = ','
 			aboutReader.LazyQuotes = true
 
-			aboutProperties := make(map[string]string, 1)
+			aboutProperties := make(map[string]string, 15)
 			var aboutRecords []string
 			var rdErr error
 			for rdErr != io.EOF {
 				aboutRecords, rdErr = aboutReader.Read()
-				if rdErr != nil && rdErr != io.EOF {
+				if (rdErr != nil && rdErr != io.EOF) || (aboutRecords != nil && len(aboutRecords) == 0){
 					continue
 				}
-				aboutProperties[aboutRecords[0]] = aboutRecords[1]
+				if(len(aboutRecords) >= 2){
+					aboutProperties[aboutRecords[0]] = aboutRecords[1]
+				}
 			}
 
 			server.InstanceName = aboutProperties["InstanceName"]
@@ -340,6 +342,20 @@ func main() {
 
 			csvAboutFile.Close()
 
+		} else {
+			// Clear server var
+			server.InstanceName = ""
+			server.InstanceType = ""
+			server.OsName = ""
+			server.Purpose = ""
+			server.IpAdr = ""
+			server.Passwd = ""
+			server.CpuUtil = ""
+			server.RamUtil = ""
+			server.RedCloakInstalled = ""
+			server.Infected = ""
+			server.Comments = ""
+			server.Analize = ""
 		}
 
 		// -------------------------
@@ -390,22 +406,24 @@ func main() {
 
 		// Set server detail params
 		_, statErr := os.Stat(dir + "/about.csv")
-		if os.IsExist(statErr) {
+		if statErr == nil {
 			csvAboutFile, _ := os.Open(dir + "/about.csv")
 			aboutReader := csv.NewReader(bufio.NewReader(csvAboutFile))
 
 			aboutReader.Comma = ','
 			aboutReader.LazyQuotes = true
 
-			aboutProperties := make(map[string]string, 1)
+			aboutProperties := make(map[string]string, 15)
 			var aboutRecords []string
 			var rdErr error
 			for rdErr != io.EOF {
 				aboutRecords, rdErr = aboutReader.Read()
-				if rdErr != nil && rdErr != io.EOF {
+				if (rdErr != nil && rdErr != io.EOF) || (aboutRecords != nil && len(aboutRecords) == 0){
 					continue
 				}
-				aboutProperties[aboutRecords[0]] = aboutRecords[1]
+				if(len(aboutRecords) >= 2){
+					aboutProperties[aboutRecords[0]] = aboutRecords[1]
+				}
 			}
 
 			server.InstanceName = aboutProperties["InstanceName"]
