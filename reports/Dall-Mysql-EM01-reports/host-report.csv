@@ -1,7 +1,0 @@
-"Key","Value"
-"Hostname","dall-mysql-em01"
-"IPs","172.20.2.69 192.168.122.1 "
-"DNS names","dall-mysql-em01"
-"Kernel","Linux dall-mysql-em01 3.10.0-862.9.1.el7.x86_64 #1 SMP Mon Jul 16 16:29:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux"
-"Filesystem /","Size:devtmpfs Used:3.9G Avail:0"
-"Memory","Total:7821 Used:3300 Free:2998 MBytes"
